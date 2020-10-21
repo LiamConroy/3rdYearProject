@@ -7,6 +7,7 @@ public class Movement : MonoBehaviour
     public CharacterController controller;
 
     public float speed = 10f;
+    public float speedBoost = 10f;
     public float gravity = -12f;
     public float jumpHeight = 5f;
 
@@ -42,5 +43,18 @@ public class Movement : MonoBehaviour
         velocity.y += gravity * Time.deltaTime;
 
         controller.Move(velocity * Time.deltaTime);
+
+         if (Input.GetKeyDown(KeyCode.LeftShift)){
+             speed += speedBoost;
+        }
+
+        else if (Input.GetKeyUp(KeyCode.LeftShift)){
+            speed -= speedBoost;
+        }
     }
+
+   
+    
+    
+
 }
