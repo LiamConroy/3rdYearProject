@@ -3,6 +3,59 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+
+    //wallrunning
+ public LayerMask whatIsWall;
+    public float wallrunForce,maxWallrunTime, maxWallSpeed;
+    bool isWallRight, isWallLeft;
+    bool isWallRunning;
+    public float maxWallRunCameraTilt, wallRunCameraTilt;
+
+    private void WallRunInput() //make sure to call in void Update
+    {
+        //Wallrun
+        if (Input.GetKey(KeyCode.D) && isWallRight) StartWallrun();
+        if (Input.GetKey(KeyCode.A) && isWallLeft) StartWallrun();
+    }
+    private void StartWallrun()
+    {
+        rb.useGravity = false;
+        isWallRunning = true;
+        //allowDashForceCounter = false;
+
+        if (rb.velocity.magnitude <= maxWallSpeed)
+        {
+            rb.AddForce(orientation.forward * wallrunForce * Time.deltaTime);
+
+            //Make sure char sticks to wall
+            if (isWallRight)
+                rb.AddForce(orientation.right * wallrunForce / 5 * Time.deltaTime);
+            else
+                rb.AddForce(-orientation.right * wallrunForce / 5 * Time.deltaTime);
+        }
+    }
+    private void StopWallRun()
+    {
+        isWallRunning = false;
+        rb.useGravity = true;
+    }
+    private void CheckForWall() //make sure to call in void Update
+    {
+        isWallRight = Physics.Raycast(transform.position, orientation.right, 1f, whatIsWall);
+        isWallLeft = Physics.Raycast(transform.position, -orientation.right, 1f, whatIsWall);
+
+        //leave wall run
+        if (!isWallLeft && !isWallRight) StopWallRun();
+       
+       // if (isWallLeft || isWallRight) doubleJumpsLeft = startDoubleJumps;
+    }
+
+
+    
+
+
+
+
     //Assingables
     public Transform playerCam;
     public Transform orientation;
@@ -20,6 +73,7 @@ public class PlayerMovement : MonoBehaviour
     public float maxSpeed = 20;
     public bool grounded;
     public LayerMask whatIsGround;
+    public float boostSpeed = 50;
 
     public float counterMovement = 0.175f;
     private float threshold = 0.01f;
@@ -64,6 +118,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        CheckForWall();
+        WallRunInput();
         MyInput();
         Look();
     }
@@ -76,11 +132,21 @@ public class PlayerMovement : MonoBehaviour
         jumping = Input.GetButton("Jump");
         crouching = Input.GetKey(KeyCode.LeftControl);
 
+        
+
         //Crouching
         if (Input.GetKeyDown(KeyCode.LeftControl))
             StartCrouch();
         if (Input.GetKeyUp(KeyCode.LeftControl))
             StopCrouch();
+
+        if (Input.GetKeyDown(KeyCode.LeftShift)){
+            maxSpeed += boostSpeed;
+        }
+
+        else if(Input.GetKeyUp(KeyCode.LeftShift)){
+            maxSpeed -= boostSpeed;
+        }
     }
 
     private void StartCrouch()
@@ -149,6 +215,8 @@ public class PlayerMovement : MonoBehaviour
         //Apply forces to move player
         rb.AddForce(orientation.transform.forward * y * moveSpeed * Time.deltaTime * multiplier * multiplierV);
         rb.AddForce(orientation.transform.right * x * moveSpeed * Time.deltaTime * multiplier);
+
+        
     }
 
     private void Jump()
@@ -170,6 +238,30 @@ public class PlayerMovement : MonoBehaviour
 
             Invoke(nameof(ResetJump), jumpCooldown);
         }
+
+        //Walljump
+        if (isWallRunning)
+        {
+            readyToJump = false;
+
+            //normal jump
+            if (isWallLeft && !Input.GetKey(KeyCode.D) || isWallRight && !Input.GetKey(KeyCode.A))
+            {
+                rb.AddForce(Vector2.up * jumpForce * 1.5f);
+                rb.AddForce(normalVector * jumpForce * 0.5f);
+            }
+
+            //sidwards wallhop
+            if (isWallRight || isWallLeft && Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) rb.AddForce(-orientation.up * jumpForce * 1f);
+            if (isWallRight && Input.GetKey(KeyCode.A)) rb.AddForce(-orientation.right * jumpForce * 3.2f);
+            if (isWallLeft && Input.GetKey(KeyCode.D)) rb.AddForce(orientation.right * jumpForce * 3.2f);
+
+            //Always add forward force
+            rb.AddForce(orientation.forward * jumpForce * 1f);
+        
+            Invoke(nameof(ResetJump), jumpCooldown);
+        }
+        
     }
 
     private void ResetJump()
