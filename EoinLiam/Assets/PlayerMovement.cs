@@ -23,16 +23,16 @@ public class PlayerMovement : MonoBehaviour
         isWallRunning = true;
         //allowDashForceCounter = false;
 
-        if (rb.velocity.magnitude <= maxWallSpeed)
-        {
-            rb.AddForce(orientation.forward * wallrunForce * Time.deltaTime);
-
-            //Make sure char sticks to wall
-            if (isWallRight)
-                rb.AddForce(orientation.right * wallrunForce / 5 * Time.deltaTime);
-            else
-                rb.AddForce(-orientation.right * wallrunForce / 5 * Time.deltaTime);
-        }
+        //if (rb.velocity.magnitude <= maxWallSpeed)
+        //{
+        //    rb.AddForce(orientation.forward * wallrunForce * Time.deltaTime);
+        //
+        //    //Make sure char sticks to wall
+        //    if (isWallRight)
+        //        rb.AddForce(orientation.right * wallrunForce / 5 * Time.deltaTime);
+        //    else
+        //        rb.AddForce(-orientation.right * wallrunForce / 5 * Time.deltaTime);
+        //}
     }
     private void StopWallRun()
     {
@@ -49,12 +49,6 @@ public class PlayerMovement : MonoBehaviour
        
        // if (isWallLeft || isWallRight) doubleJumpsLeft = startDoubleJumps;
     }
-
-
-    
-
-
-
 
     //Assingables
     public Transform playerCam;
@@ -240,27 +234,27 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //Walljump
-        if (isWallRunning)
-        {
-            readyToJump = false;
-
+        //if (isWallRunning)
+        //{
+         //   readyToJump = false;
+         
             //normal jump
-            if (isWallLeft && !Input.GetKey(KeyCode.D) || isWallRight && !Input.GetKey(KeyCode.A))
-            {
-                rb.AddForce(Vector2.up * jumpForce * 1.5f);
-                rb.AddForce(normalVector * jumpForce * 0.5f);
-            }
+         //   if (isWallLeft && !Input.GetKey(KeyCode.D) || isWallRight && !Input.GetKey(KeyCode.A))
+         //   {
+         //       rb.AddForce(Vector2.up * jumpForce * 1.5f);
+        //        rb.AddForce(normalVector * jumpForce * 0.5f);
+         //   }
 
             //sidwards wallhop
-            if (isWallRight || isWallLeft && Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) rb.AddForce(-orientation.up * jumpForce * 1f);
-            if (isWallRight && Input.GetKey(KeyCode.A)) rb.AddForce(-orientation.right * jumpForce * 3.2f);
-            if (isWallLeft && Input.GetKey(KeyCode.D)) rb.AddForce(orientation.right * jumpForce * 3.2f);
+         //   if (isWallRight || isWallLeft && Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) rb.AddForce(-orientation.up * jumpForce * 1f);
+         //   if (isWallRight && Input.GetKey(KeyCode.A)) rb.AddForce(-orientation.right * jumpForce * 3.2f);
+          //  if (isWallLeft && Input.GetKey(KeyCode.D)) rb.AddForce(orientation.right * jumpForce * 3.2f);
 
             //Always add forward force
-            rb.AddForce(orientation.forward * jumpForce * 1f);
+           // rb.AddForce(orientation.forward * jumpForce * 1f);
         
-            Invoke(nameof(ResetJump), jumpCooldown);
-        }
+          //  Invoke(nameof(ResetJump), jumpCooldown);
+    //    }
         
     }
 
