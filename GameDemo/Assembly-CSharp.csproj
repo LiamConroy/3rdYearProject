@@ -36,12 +36,15 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets\PlayerManager.cs" />
      <Compile Include="Assets\Scripts\Enemy.cs" />
      <Compile Include="Assets\Scripts\GrapplingGun.cs" />
      <Compile Include="Assets\Scripts\MoveCamera.cs" />
      <Compile Include="Assets\Scripts\PlayerLocation.cs" />
      <Compile Include="Assets\Scripts\PlayerMovement.cs" />
      <Compile Include="Assets\Scripts\RotateGun.cs" />
+     <Compile Include="Assets\Scripts\projMovemant.cs" />
+     <Compile Include="Assets\gunScript.cs" />
      <Compile Include="Assets\killBox.cs" />
     <Reference Include="UnityEngine">
         <HintPath>C:/Unity/2019.4.10f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>

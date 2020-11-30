@@ -2,6 +2,10 @@
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
+//using UnityEngine.Collection;
+//using UnityEngine.Collection.Generic;
+
+
 
 public class Enemy : MonoBehaviour
 {
@@ -17,43 +21,46 @@ public class Enemy : MonoBehaviour
     
     
     void Start (){
-        target = PlayerLocation.instance.PlayerCharacter.transform;
+        target = PlayerManager.instance.player.transform;
         agent = GetComponent<NavMeshAgent>();
     }
 
-    void Update (){
-
-        
+   //Update is called once per frame
+    void Update()
+    {
+        //Follow player
         float distance = Vector3.Distance(target.position, transform.position);
-
-
-        //checks if the target is within the sight radius, if true the model rotates to face the player
-        if (distance <= lookRadius){
+        if(distance <= lookRadius)
+        {
+            agent.speed = 2f;
+            //animator1.SetBool("isRunning", true);
             agent.SetDestination(target.position);
-
-            if(distance <= agent.stoppingDistance){
-             FaceTarget();
-            }
         }
-  
+        else
+        {
+            //animator1.SetBool("isRunning", false);
+            agent.speed = 0;
+            //StartCoroutine(stopWalking());
+        }
+
     }
 
 
     //checks if the enemy is colliding with the player, if true deal damage to the player
-  // void OnTriggerStay(Collider other){
+  //void OnTriggerStay(Collider other){
    //   PlayerMovement PlayerCharacter = other.GetComponent<PlayerMovement>();
-  //    if (PlayerCharacter != null){
-   //        PlayerCharacter.playerHurt(dmg);
-  //     }
-  // }
+   //  if (PlayerCharacter != null){
+    //      PlayerCharacter.playerHurt(dmg);
+     // }
+  //}
 
  
 //grabs the players(target) position and rotates the model to face the player
-void FaceTarget (){
-        Vector3 direction = (target.position - transform.position).normalized;
-        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 15f);
-    }
+//void FaceTarget (){
+      //  Vector3 direction = (target.position - transform.position).normalized;
+      //  Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+       // transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 15f);
+ //   }
     
 
     //allows the player to do damage to the enemy, when  its hit by a raycast
@@ -61,7 +68,7 @@ void FaceTarget (){
     {
         health -= amount;
        if (health <= 0f) {
-           Die();
+          Die();
        }
     }
 
