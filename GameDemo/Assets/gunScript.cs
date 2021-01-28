@@ -67,7 +67,7 @@ public ParticleSystem muzzleFlash;
 
          
          //displays ammo and ammopool to the playhers HUD
-         ammoDisplay.text = currentAmmo.ToString();
+        ammoDisplay.text = currentAmmo.ToString();
         ammopoolDisplay.text = ammoPool.ToString();
 
 
