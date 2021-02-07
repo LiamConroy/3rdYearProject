@@ -9,7 +9,7 @@ public class killBox : MonoBehaviour
     {
         if (other.transform.CompareTag("Player"))
         {
-            SceneManager.LoadScene("DemoScene");
+            SceneManager.LoadScene("GameDemo");
         }
     }
 }
