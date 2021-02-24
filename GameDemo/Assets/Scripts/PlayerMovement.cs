@@ -3,13 +3,72 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    //Assingables
+    public Transform playerCam;
+    public Transform orientation;
 
-    //wallrunning
- public LayerMask whatIsWall;
-    public float wallrunForce,maxWallrunTime, maxWallSpeed;
+    //Shooting
+    public GameObject bullet;
+    private GameObject clone;
+    public GameObject muzzleObj;
+    private Vector3 muzzle;
+    public Camera playerCamera;
+
+    //Other
+    private Rigidbody rb;
+
+    //Rotation and look
+    private float xRotation;
+    private float sensitivity = 50f;
+    private float sensMultiplier = 1f;
+
+    //Movement
+    public float moveSpeed = 4500;
+    public float maxSpeed = 20;
+    public bool grounded;
+    public LayerMask whatIsGround;
+
+    public float counterMovement = 0.175f;
+    private float threshold = 0.01f;
+    public float maxSlopeAngle = 35f;
+
+    //Health
+    public int maxHealth = 100;
+    public int health = 0;
+
+    //Crouch & Slide
+    private Vector3 crouchScale = new Vector3(1, 0.5f, 1);
+    private Vector3 playerScale;
+    public float slideForce = 400;
+    public float slideCounterMovement = 0.2f;
+
+    //Jumping
+    private bool readyToJump = true;
+    private float jumpCooldown = 0.25f;
+    public float jumpForce = 550f;
+
+    //Input
+    float x, y;
+    bool jumping, sprinting, crouching;
+
+    //Sliding
+    private Vector3 normalVector = Vector3.up;
+    private Vector3 wallNormalVector;
+
+    //Wallrunning
+    public LayerMask whatIsWall;
+    public float wallrunForce, maxWallrunTime, maxWallSpeed;
     bool isWallRight, isWallLeft;
     public bool isWallRunning;
     public float maxWallRunCameraTilt, wallRunCameraTilt;
+
+    void Start()
+    {
+        health = maxHealth;
+        playerScale = transform.localScale;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
 
     private void WallRunInput() //make sure to call in void Update
     {
@@ -17,6 +76,7 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKey(KeyCode.D) && isWallRight) StartWallrun();
         if (Input.GetKey(KeyCode.A) && isWallLeft) StartWallrun();
     }
+
     private void StartWallrun()
     {
         rb.useGravity = false;
@@ -46,70 +106,14 @@ public class PlayerMovement : MonoBehaviour
 
         //leave wall run
         if (!isWallLeft && !isWallRight) StopWallRun();
-       
-       // if (isWallLeft || isWallRight) doubleJumpsLeft = startDoubleJumps;
+
+        // if (isWallLeft || isWallRight) doubleJumpsLeft = startDoubleJumps;
     }
-
-
-    
-
-
-
-
-    //Assingables
-    public Transform playerCam;
-    public Transform orientation;
-
-    //Other
-    private Rigidbody rb;
-
-    //Rotation and look
-    private float xRotation;
-    private float sensitivity = 50f;
-    private float sensMultiplier = 1f;
-
-    //Movement
-    public float moveSpeed = 4500;
-    public float maxSpeed = 20;
-    public bool grounded;
-    public LayerMask whatIsGround;
-    public float boostSpeed = 50;
-
-    public float counterMovement = 0.175f;
-    private float threshold = 0.01f;
-    public float maxSlopeAngle = 35f;
-
-    //Crouch & Slide
-    private Vector3 crouchScale = new Vector3(1, 0.5f, 1);
-    private Vector3 playerScale;
-    public float slideForce = 400;
-    public float slideCounterMovement = 0.2f;
-
-    //Jumping
-    private bool readyToJump = true;
-    private float jumpCooldown = 0.25f;
-    public float jumpForce = 550f;
-
-    //Input
-    float x, y;
-    bool jumping, sprinting, crouching;
-
-    //Sliding
-    private Vector3 normalVector = Vector3.up;
-    private Vector3 wallNormalVector;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
     }
-
-    void Start()
-    {
-        playerScale = transform.localScale;
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-    }
-
 
     private void FixedUpdate()
     {
@@ -122,6 +126,18 @@ public class PlayerMovement : MonoBehaviour
         WallRunInput();
         MyInput();
         Look();
+
+        //Player death
+        if (health <= 0)
+            Die();
+
+        if(Input.GetMouseButtonDown(1))
+        {
+            Shoot();
+        }
+
+        muzzleObj = GameObject.Find("muzzleFlash");
+        muzzle = muzzleObj.transform.position;
     }
 
     //Find user input
@@ -132,21 +148,13 @@ public class PlayerMovement : MonoBehaviour
         jumping = Input.GetButton("Jump");
         crouching = Input.GetKey(KeyCode.LeftControl);
 
-        
+
 
         //Crouching
         if (Input.GetKeyDown(KeyCode.LeftControl))
             StartCrouch();
         if (Input.GetKeyUp(KeyCode.LeftControl))
             StopCrouch();
-
-        if (Input.GetKeyDown(KeyCode.LeftShift)){
-            maxSpeed += boostSpeed;
-        }
-
-        else if(Input.GetKeyUp(KeyCode.LeftShift)){
-            maxSpeed -= boostSpeed;
-        }
     }
 
     private void StartCrouch()
@@ -240,27 +248,27 @@ public class PlayerMovement : MonoBehaviour
         }
 
         //Walljump
-        // if (isWallRunning)
-        // {
-        //     readyToJump = false;
+        if (isWallRunning)
+        {
+            readyToJump = false;
 
-        //     //normal jump
-        //     if (isWallLeft && !Input.GetKey(KeyCode.D) || isWallRight && !Input.GetKey(KeyCode.A))
-        //     {
-        //         rb.AddForce(Vector2.up * jumpForce * 1.5f);
-        //         rb.AddForce(normalVector * jumpForce * 0.5f);
-        //     }
+            //normal jump
+            if (isWallLeft && !Input.GetKey(KeyCode.D) || isWallRight && !Input.GetKey(KeyCode.A))
+            {
+                rb.AddForce(Vector2.up * jumpForce * 1.5f);
+                rb.AddForce(normalVector * jumpForce * 0.5f);
+            }
 
-        //     //sidwards wallhop
-        //     if (isWallRight || isWallLeft && Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) rb.AddForce(-orientation.up * jumpForce * 1f);
-        //     if (isWallRight && Input.GetKey(KeyCode.A)) rb.AddForce(-orientation.right * jumpForce * 3.2f);
-        //     if (isWallLeft && Input.GetKey(KeyCode.D)) rb.AddForce(orientation.right * jumpForce * 3.2f);
+            //sidwards wallhop
+            if (isWallRight || isWallLeft && Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) rb.AddForce(-orientation.up * jumpForce * 1f);
+            if (isWallRight && Input.GetKey(KeyCode.A)) rb.AddForce(-orientation.right * jumpForce * 3.2f);
+            if (isWallLeft && Input.GetKey(KeyCode.D)) rb.AddForce(orientation.right * jumpForce * 3.2f);
 
-        //     //Always add forward force
-        //     rb.AddForce(orientation.forward * jumpForce * 1f);
+            //Always add forward force
+            rb.AddForce(orientation.forward * jumpForce * 1f);
         
-        //     Invoke(nameof(ResetJump), jumpCooldown);
-        // }
+            Invoke(nameof(ResetJump), jumpCooldown);
+        }
         
     }
 
@@ -383,4 +391,21 @@ public class PlayerMovement : MonoBehaviour
         grounded = false;
     }
 
+    public void playerHurt(int dmg)
+    {
+        Debug.Log("damaged");
+        health -= dmg;
+//        healthBar.SetHealth(health);
+    }
+
+    void Shoot() {
+        GameObject clone = Instantiate(bullet, muzzle, gameObject.transform.rotation);
+        clone.transform.forward = playerCamera.transform.forward;
+        
+    }
+
+    public void Die()
+    {
+        print("You've died!");
+    }
 }

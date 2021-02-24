@@ -5,24 +5,34 @@ using UnityEngine.SceneManagement;
 //using UnityEngine.Collection;
 //using UnityEngine.Collection.Generic;
 
-
-
 public class Enemy : MonoBehaviour
 {
     // Start is called before the first frame update
     public float health = 100f;
     public float lookRadius = 10f; 
     public int dmg = 10;
-    
+    public float wait;
+    private float currentWait;
+    private bool shot;
+
+    public Animator animator1;
+    public GameObject Bullet;
+    public GameObject BulletSpawnPoint;
+    private Transform bulletSpawned;
+    public CapsuleCollider enemyCollider;
+
     // Update is called once per frame
 
     Transform target;
     NavMeshAgent agent;
     
-    
     void Start (){
         target = PlayerManager.instance.player.transform;
         agent = GetComponent<NavMeshAgent>();
+
+        BulletSpawnPoint = GameObject.Find("BulletSpawnPoint");
+
+        enemyCollider = GetComponent<CapsuleCollider>();
     }
 
    //Update is called once per frame
@@ -32,17 +42,37 @@ public class Enemy : MonoBehaviour
         float distance = Vector3.Distance(target.position, transform.position);
         if(distance <= lookRadius)
         {
-            agent.speed = 2f;
-            //animator1.SetBool("isRunning", true);
+            agent.speed = 8f;
+            animator1.SetBool("Sprint", true);
+            print("Sprint");
             agent.SetDestination(target.position);
         }
         else
         {
-            //animator1.SetBool("isRunning", false);
-            agent.speed = 0;
+            animator1.SetBool("Sprint", false);
+            agent.speed = 0f;
             //StartCoroutine(stopWalking());
         }
 
+        //If player is within distance, and ready to shoot, then shoot
+        if(distance <= lookRadius && currentWait == 0)
+        {
+            Shoot();
+        }
+
+        //If enemy has shot, wait a sec before shooting again
+        if (shot && currentWait < wait)
+        {
+            currentWait += 1 * Time.deltaTime;
+        }
+        if(currentWait >= wait)
+        {
+            currentWait = 0;
+        }
+
+        if (health <= 0f) {
+          Die();
+       }
     }
 
 
@@ -63,26 +93,33 @@ public class Enemy : MonoBehaviour
  //   }
     
 
-    //allows the player to do damage to the enemy, when  its hit by a raycast
-    public void TakeDamage (float amount)
+    //Enemy takes damage when hit by player's raycast
+    //public void TakeDamage (float amount)
+    // {
+    //     health -= amount;
+    //    if (health <= 0f) {
+    //       Die();
+    //    }
+    // }
+
+    public void Shoot()
     {
-        health -= amount;
-       if (health <= 0f) {
-          Die();
-       }
+        shot = true;
+
+        bulletSpawned = Instantiate(Bullet.transform, BulletSpawnPoint.transform.position, Quaternion.identity);
+        bulletSpawned.rotation = this.transform.rotation;
     }
 
 
     void Die (){
-       gameObject.SetActive(false);
+        lookRadius = 0;
+        animator1.SetBool("Dead", true);
+        enemyCollider.enabled = false;
     }
 
-//draws a sphere around the enemy model, for detecting if the player is within it
+    //Draws a sphere around the enemy model, for detecting if the player is within it
     void OnDrawGizmosSelected() {
         Gizmos.color = Color.red;
         Gizmos. DrawWireSphere(transform.position, lookRadius);    
     }
-
 }
-
-
