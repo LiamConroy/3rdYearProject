@@ -3,10 +3,12 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+
+    
     //Assingables
     public Transform playerCam;
     public Transform orientation;
-
+    
     //Shooting
     public GameObject bullet;
     private GameObject clone;
@@ -280,6 +282,10 @@ public class PlayerMovement : MonoBehaviour
     private float desiredX;
     private void Look()
     {
+
+       // GameObject.Find(GameIsPaused).GetComponent<>;
+
+        //if(!GameIsPaused){
         float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.fixedDeltaTime * sensMultiplier;
         float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.fixedDeltaTime * sensMultiplier;
 
@@ -294,6 +300,7 @@ public class PlayerMovement : MonoBehaviour
         //Perform the rotations
         playerCam.transform.localRotation = Quaternion.Euler(xRotation, desiredX, 0);
         orientation.transform.localRotation = Quaternion.Euler(0, desiredX, 0);
+      //  }
     }
 
     private void CounterMovement(float x, float y, Vector2 mag)
