@@ -29,9 +29,7 @@ public class Enemy : MonoBehaviour
     void Start (){
         target = PlayerManager.instance.player.transform;
         agent = GetComponent<NavMeshAgent>();
-
         BulletSpawnPoint = GameObject.Find("BulletSpawnPoint");
-
         enemyCollider = GetComponent<CapsuleCollider>();
     }
 
@@ -43,13 +41,13 @@ public class Enemy : MonoBehaviour
         if(distance <= lookRadius)
         {
             agent.speed = 8f;
-            animator1.SetBool("Sprint", true);
-            print("Sprint");
+            //animator1.SetBool("Sprint", true);
+            //print("Sprint");
             agent.SetDestination(target.position);
         }
         else
         {
-            animator1.SetBool("Sprint", false);
+            //animator1.SetBool("Sprint", false);
             agent.speed = 0f;
             //StartCoroutine(stopWalking());
         }
@@ -105,7 +103,7 @@ public class Enemy : MonoBehaviour
     public void Shoot()
     {
         shot = true;
-
+        animator1.SetBool("Shoot", true);
         bulletSpawned = Instantiate(Bullet.transform, BulletSpawnPoint.transform.position, Quaternion.identity);
         bulletSpawned.rotation = this.transform.rotation;
     }
