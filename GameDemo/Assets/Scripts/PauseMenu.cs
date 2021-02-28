@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PauseMenu : MonoBehaviour
 {
-
+    public GameObject Player;
     public static bool GameIsPaused = false;
 
     public GameObject PauseMenuOverlay;
@@ -28,11 +28,13 @@ public class PauseMenu : MonoBehaviour
         PauseMenuOverlay.SetActive(false);
         Time.timeScale = 1f;
         GameIsPaused = false;
+        
     }
 
     void Pause(){
         PauseMenuOverlay.SetActive(true);
         Time.timeScale = 0f;
         GameIsPaused = true;
+        
     }
 }

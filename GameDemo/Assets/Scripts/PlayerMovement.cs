@@ -5,6 +5,7 @@ public class PlayerMovement : MonoBehaviour
 {
 
     
+    //public static bool GameIsPaused = false;
     //Assingables
     public Transform playerCam;
     public Transform orientation;
@@ -70,6 +71,7 @@ public class PlayerMovement : MonoBehaviour
         playerScale = transform.localScale;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+       
     }
 
     private void WallRunInput() //make sure to call in void Update
@@ -124,10 +126,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        //Debug.Log(GameIsPaused);
+
         CheckForWall();
         WallRunInput();
-        MyInput();
-        Look();
+        
+       // if(!GameIsPaused){
+            Look();
+            MyInput();
+       // }
+        
 
         //Player death
         if (health <= 0)
@@ -135,7 +143,9 @@ public class PlayerMovement : MonoBehaviour
 
         if(Input.GetMouseButtonDown(1))
         {
+           //if(!GameIsPaused){
             Shoot();
+            //}
         }
 
         muzzleObj = GameObject.Find("muzzleFlash");
@@ -157,6 +167,15 @@ public class PlayerMovement : MonoBehaviour
             StartCrouch();
         if (Input.GetKeyUp(KeyCode.LeftControl))
             StopCrouch();
+        //Checks if Game is paused, will prevent player from moving camera/shooting
+        // if (Input.GetKeyDown(KeyCode.Escape)){
+        //     if (GameIsPaused){
+        //         GameIsPaused = false;
+        //     }
+        //     else{
+        //         GameIsPaused = true;
+        //     }
+        // }
     }
 
     private void StartCrouch()

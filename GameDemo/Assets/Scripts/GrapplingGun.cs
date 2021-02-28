@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GrapplingGun : MonoBehaviour
 {
+
+    //public static bool GameIsPaused = false;
     private LineRenderer lr;
     private Vector3 grapplePoint;
     public LayerMask whatIsGrappleable;
@@ -19,6 +21,16 @@ public class GrapplingGun : MonoBehaviour
     void Update()
     {
 
+    // if(Input.GetKeyDown(KeyCode.Escape)){
+    //     if (GameIsPaused){
+    //             GameIsPaused = false;
+    //         }
+    //         else{
+    //             GameIsPaused = true;
+    //         }
+    // }
+
+    //if(!GameIsPaused){
         if (Input.GetMouseButtonDown(0))
         {
             StartGrapple();
@@ -27,6 +39,7 @@ public class GrapplingGun : MonoBehaviour
         {
             StopGrapple();
         }
+     // }
     }
 
     void LateUpdate()
