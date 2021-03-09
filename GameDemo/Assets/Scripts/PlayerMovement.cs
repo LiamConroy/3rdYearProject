@@ -6,6 +6,7 @@ public class PlayerMovement : MonoBehaviour
 
     
     //public static bool GameIsPaused = false;
+    public static bool hasWalljumped = false;
     //Assingables
     public Transform playerCam;
     public Transform orientation;
@@ -52,7 +53,7 @@ public class PlayerMovement : MonoBehaviour
 
     //Input
     float x, y;
-    bool jumping, sprinting, crouching;
+    bool jumping, crouching;
 
     //Sliding
     private Vector3 normalVector = Vector3.up;
@@ -108,6 +109,7 @@ public class PlayerMovement : MonoBehaviour
         isWallRight = Physics.Raycast(transform.position, orientation.right, 1f, whatIsWall);
         isWallLeft = Physics.Raycast(transform.position, -orientation.right, 1f, whatIsWall);
 
+
         //leave wall run
         if (!isWallLeft && !isWallRight) StopWallRun();
 
@@ -127,16 +129,21 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         //Debug.Log(GameIsPaused);
-
+        Debug.Log(hasWalljumped);
         CheckForWall();
         WallRunInput();
         
-       // if(!GameIsPaused){
+       //if(!GameIsPaused){
             Look();
             MyInput();
-       // }
+      // }
+
+      Debug.Log(moveSpeed);
         
 
+        if(moveSpeed > 5500){
+            moveSpeed = 5500;
+        }
         //Player death
         if (health <= 0)
             Die();
@@ -157,6 +164,7 @@ public class PlayerMovement : MonoBehaviour
     {
         x = Input.GetAxisRaw("Horizontal");
         y = Input.GetAxisRaw("Vertical");
+
         jumping = Input.GetButton("Jump");
         crouching = Input.GetKey(KeyCode.LeftControl);
 
@@ -167,13 +175,16 @@ public class PlayerMovement : MonoBehaviour
             StartCrouch();
         if (Input.GetKeyUp(KeyCode.LeftControl))
             StopCrouch();
+
         //Checks if Game is paused, will prevent player from moving camera/shooting
         // if (Input.GetKeyDown(KeyCode.Escape)){
-        //     if (GameIsPaused){
-        //         GameIsPaused = false;
+        //     if (PauseMenu.GameIsPaused){
+        //         Resume();
+        //         Debug.Log("Running");
         //     }
         //     else{
-        //         GameIsPaused = true;
+        //         Pause();
+        //         Debug.Log("Paused");
         //     }
         // }
     }
@@ -274,11 +285,18 @@ public class PlayerMovement : MonoBehaviour
             readyToJump = false;
 
             //normal jump
+        if(!hasWalljumped){
             if (isWallLeft && !Input.GetKey(KeyCode.D) || isWallRight && !Input.GetKey(KeyCode.A))
             {
                 rb.AddForce(Vector2.up * jumpForce * 1.5f);
                 rb.AddForce(normalVector * jumpForce * 0.5f);
+                
             }
+
+            // else {
+            //     hasWalljumped = true;
+            // }
+        } 
 
             //sidwards wallhop
             if (isWallRight || isWallLeft && Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) rb.AddForce(-orientation.up * jumpForce * 1f);
@@ -289,6 +307,8 @@ public class PlayerMovement : MonoBehaviour
             rb.AddForce(orientation.forward * jumpForce * 1f);
         
             Invoke(nameof(ResetJump), jumpCooldown);
+
+            
         }
         
     }
@@ -296,6 +316,7 @@ public class PlayerMovement : MonoBehaviour
     private void ResetJump()
     {
         readyToJump = true;
+        hasWalljumped = false;
     }
 
     private float desiredX;
@@ -304,7 +325,7 @@ public class PlayerMovement : MonoBehaviour
 
        // GameObject.Find(GameIsPaused).GetComponent<>;
 
-        //if(!GameIsPaused){
+        if(!PauseMenu.GameIsPaused){
         float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.fixedDeltaTime * sensMultiplier;
         float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.fixedDeltaTime * sensMultiplier;
 
@@ -317,9 +338,23 @@ public class PlayerMovement : MonoBehaviour
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
         //Perform the rotations
-        playerCam.transform.localRotation = Quaternion.Euler(xRotation, desiredX, 0);
+        playerCam.transform.localRotation = Quaternion.Euler(xRotation, desiredX, wallRunCameraTilt);
         orientation.transform.localRotation = Quaternion.Euler(0, desiredX, 0);
-      //  }
+
+        if (Math.Abs(wallRunCameraTilt) < maxWallRunCameraTilt && isWallRunning && isWallRight)
+            wallRunCameraTilt += Time.deltaTime * maxWallRunCameraTilt * 3;
+        if (Math.Abs(wallRunCameraTilt) < maxWallRunCameraTilt && isWallRunning && isWallLeft)
+            wallRunCameraTilt -= Time.deltaTime * maxWallRunCameraTilt * 3;
+
+        //Tilts camera back again
+        if (wallRunCameraTilt > 0 && !isWallRight && !isWallLeft)
+            wallRunCameraTilt -= Time.deltaTime * maxWallRunCameraTilt * 3;
+        if (wallRunCameraTilt < 0 && !isWallRight && !isWallLeft)
+            wallRunCameraTilt += Time.deltaTime * maxWallRunCameraTilt * 3;
+
+        }
+
+        
     }
 
     private void CounterMovement(float x, float y, Vector2 mag)
@@ -417,6 +452,22 @@ public class PlayerMovement : MonoBehaviour
         grounded = false;
     }
 
+    // void Resume(){
+    //     Debug.Log("Running");
+    //     GameIsPaused = false;
+    //     Cursor.visible = false;
+    //     Cursor.lockState = CursorLockMode.Locked;
+        
+    // }
+
+    // void Pause(){
+    //     Debug.Log("Paused");
+    //     GameIsPaused = true;
+    //     Cursor.visible = true;
+    //     Cursor.lockState = CursorLockMode.None;
+         
+    // }
+
     public void playerHurt(int dmg)
     {
         Debug.Log("damaged");
@@ -425,8 +476,11 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void Shoot() {
+
+         if(!PauseMenu.GameIsPaused){
         GameObject clone = Instantiate(bullet, muzzle, gameObject.transform.rotation);
         clone.transform.forward = playerCamera.transform.forward;
+         }
         
     }
 

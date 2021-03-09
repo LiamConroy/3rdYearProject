@@ -30,7 +30,7 @@ public class GrapplingGun : MonoBehaviour
     //         }
     // }
 
-    //if(!GameIsPaused){
+    if(!PauseMenu.GameIsPaused){
         if (Input.GetMouseButtonDown(0))
         {
             StartGrapple();
@@ -39,7 +39,7 @@ public class GrapplingGun : MonoBehaviour
         {
             StopGrapple();
         }
-     // }
+     }
     }
 
     void LateUpdate()

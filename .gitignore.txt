@@ -1,1 +1,2 @@
-temp
+
+dir_to_ingore/Sci-FiTexturePack1

@@ -18,4 +18,8 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene("LevelSelect");
     }
 
+    public void NextLevel (){
+        SceneManager.LoadScene("LevelTest");
+        Debug.Log("scene switch");
+    }
 }

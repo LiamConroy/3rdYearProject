@@ -5,14 +5,18 @@ using UnityEngine.UI;
 
 public class Timer : MonoBehaviour
 {
-    public float timeStart;
+    public static float timeStart;
     public Text textBox;
-
-    bool timerActive = false;
+    public static bool timerActive = false;
 
     // Start is called before the first frame update
     void Start()
     {
+        if(timerActive){
+            timerActive = false;
+            timeStart = 0;
+        }
+
         textBox.text = timeStart.ToString("F2");
     }
 
