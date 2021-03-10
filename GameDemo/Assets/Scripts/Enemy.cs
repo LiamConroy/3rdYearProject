@@ -14,6 +14,7 @@ public class Enemy : MonoBehaviour
     public float wait;
     private float currentWait;
     private bool shot;
+    public float velocity;
 
     public Animator animator1;
     public GameObject Bullet;
@@ -41,14 +42,14 @@ public class Enemy : MonoBehaviour
         if(distance <= lookRadius)
         {
             agent.speed = 8f;
-            //animator1.SetBool("Sprint", true);
-            //print("Sprint");
             agent.SetDestination(target.position);
+            animator1.SetFloat("Speed", 2f);
         }
         else
         {
-            //animator1.SetBool("Sprint", false);
+            animator1.SetBool("Sprint", false);
             agent.speed = 0f;
+            animator1.SetFloat("Speed", 0f);
             //StartCoroutine(stopWalking());
         }
 
@@ -71,6 +72,7 @@ public class Enemy : MonoBehaviour
         if (health <= 0f) {
           Die();
        }
+
     }
 
 
