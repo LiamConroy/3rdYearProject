@@ -14,7 +14,9 @@ public class Enemy : MonoBehaviour
     public float wait;
     private float currentWait;
     private bool shot;
-    public float velocity;
+    public float velocity = 0f;
+    public float acceleration = 0.1f;
+    int VelocityHash;
 
     public Animator animator1;
     public GameObject Bullet;
@@ -32,6 +34,8 @@ public class Enemy : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         BulletSpawnPoint = GameObject.Find("BulletSpawnPoint");
         enemyCollider = GetComponent<CapsuleCollider>();
+
+        VelocityHash = Animator.StringToHash("Velocity");
     }
 
    //Update is called once per frame
@@ -41,17 +45,18 @@ public class Enemy : MonoBehaviour
         float distance = Vector3.Distance(target.position, transform.position);
         if(distance <= lookRadius)
         {
-            agent.speed = 8f;
+            velocity += Time.deltaTime * acceleration;
             agent.SetDestination(target.position);
-            animator1.SetFloat("Speed", 2f);
+            //agent.speed = 8f;
+            //animator1.SetFloat("Speed", 2f);
         }
         else
         {
-            animator1.SetBool("Sprint", false);
-            agent.speed = 0f;
-            animator1.SetFloat("Speed", 0f);
-            //StartCoroutine(stopWalking());
+            //agent.speed = 0f;
+            //animator1.SetFloat("Speed", 0f);
         }
+
+        animator1.SetFloat(VelocityHash, velocity);
 
         //If player is within distance, and ready to shoot, then shoot
         if(distance <= lookRadius && currentWait == 0)
