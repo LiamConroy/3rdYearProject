@@ -342,15 +342,15 @@ public class PlayerMovement : MonoBehaviour
         orientation.transform.localRotation = Quaternion.Euler(0, desiredX, 0);
 
         if (Math.Abs(wallRunCameraTilt) < maxWallRunCameraTilt && isWallRunning && isWallRight)
-            wallRunCameraTilt += Time.deltaTime * maxWallRunCameraTilt * 3;
+            wallRunCameraTilt += Time.deltaTime * maxWallRunCameraTilt * 6;
         if (Math.Abs(wallRunCameraTilt) < maxWallRunCameraTilt && isWallRunning && isWallLeft)
-            wallRunCameraTilt -= Time.deltaTime * maxWallRunCameraTilt * 3;
+            wallRunCameraTilt -= Time.deltaTime * maxWallRunCameraTilt * 6;
 
         //Tilts camera back again
         if (wallRunCameraTilt > 0 && !isWallRight && !isWallLeft)
-            wallRunCameraTilt -= Time.deltaTime * maxWallRunCameraTilt * 3;
+            wallRunCameraTilt -= Time.deltaTime * maxWallRunCameraTilt * 6;
         if (wallRunCameraTilt < 0 && !isWallRight && !isWallLeft)
-            wallRunCameraTilt += Time.deltaTime * maxWallRunCameraTilt * 3;
+            wallRunCameraTilt += Time.deltaTime * maxWallRunCameraTilt * 6;
 
         }
 
