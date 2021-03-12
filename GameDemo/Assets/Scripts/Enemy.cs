@@ -17,7 +17,8 @@ public class Enemy : MonoBehaviour
     public float velocity = 0.0f;
     public float acceleration = 0.1f;
     int VelocityHash;
-    public bool doorReady;
+    private bool isDead;
+    //public bool doorReady;
 
     public Animator animator1;
     
@@ -37,7 +38,8 @@ public class Enemy : MonoBehaviour
         BulletSpawnPoint = GameObject.Find("BulletSpawnPoint");
         enemyCollider = GetComponent<CapsuleCollider>();
         VelocityHash = Animator.StringToHash("Velocity");
-        doorReady = false;
+        //doorReady = false;
+        isDead = false;
     }
 
    //Update is called once per frame
@@ -77,7 +79,8 @@ public class Enemy : MonoBehaviour
         }
 
         if (health <= 0f) {
-          Die();
+            isDead = true;
+            Die();
        }
 
     }
@@ -90,12 +93,16 @@ public class Enemy : MonoBehaviour
         bulletSpawned.rotation = this.transform.rotation;
     }
 
-
     void Die (){
-        lookRadius = 0;
-        animator1.SetBool("Dead", true);
-        enemyCollider.enabled = false;
-        doorReady = true;
+        if(isDead == true) {
+            lookRadius = 0;
+            animator1.SetBool("Dead", true);
+            enemyCollider.enabled = false;
+            //doorReady = true;
+            doorOpenScript.kills += 1;
+            health = 1f;
+            isDead = false;
+        }
     }
 
     //Draws a sphere around the enemy model, for detecting if the player is within it
