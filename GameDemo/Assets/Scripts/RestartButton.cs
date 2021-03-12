@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class RestartButton : MonoBehaviour
 {
+
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -14,7 +16,7 @@ public class RestartButton : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Restart 
+
         Scene currentScene = SceneManager.GetActiveScene();  
         string sceneName = currentScene.name;
 
@@ -22,8 +24,6 @@ public class RestartButton : MonoBehaviour
             Debug.Log("game restart");
             SceneManager.LoadScene(sceneName);
         }
-
-        //Pause
         
     }
 }

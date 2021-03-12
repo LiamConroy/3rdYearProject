@@ -7,7 +7,7 @@ public class PlayerBullet : MonoBehaviour
     private GameObject triggeringEnemy;
     public float speed = 8f;
     public float damage = 100f;
-
+ 
     // Start is called before the first frame update
     void Start()
     {

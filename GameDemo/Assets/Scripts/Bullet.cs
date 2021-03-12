@@ -13,7 +13,7 @@ public class Bullet : MonoBehaviour
     public int damage;
 
     private GameObject player;
-
+    
     //Methods
     void Start()
     {
@@ -22,19 +22,26 @@ public class Bullet : MonoBehaviour
 
     void Update()
     {
+        //Scene currentScene = SceneManager.GetActiveScene();  
+        
+
         transform.Translate(Vector3.forward * Time.deltaTime * speed);
         maxDistance += 1 * Time.deltaTime;
 
         if (maxDistance >= 5)
             Destroy(this.gameObject);
+
     }
 
     public void OnTriggerEnter(Collider other)
     {
+        Scene currentScene = SceneManager.GetActiveScene();  
+        string sceneName = currentScene.name;
+
         if (other.tag == "Player")
         {
            print("Ouch!");
-           SceneManager.LoadScene("LevelOne");
+           SceneManager.LoadScene(sceneName);
         }
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class LevelSwitch : MonoBehaviour
 {
+    
    void OnTriggerEnter(Collider other)
     {
         Debug.Log("Collision");
