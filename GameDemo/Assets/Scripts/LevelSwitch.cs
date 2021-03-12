@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class LevelSwitch : MonoBehaviour
 {
+
     
    void OnTriggerEnter(Collider other)
     {
@@ -11,9 +12,11 @@ public class LevelSwitch : MonoBehaviour
         
         if (other.transform.CompareTag("Player"))
         {
-            SceneManager.LoadScene("YouWinScene");
             Timer.timerActive = false;
             Debug.Log("Timer Off");
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+             SceneManager.LoadScene("YouWinScene");
         }
 
     }

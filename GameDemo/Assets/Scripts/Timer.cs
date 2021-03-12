@@ -17,6 +17,8 @@ public class Timer : MonoBehaviour
             timeStart = 0;
         }
 
+        //if()
+
         textBox.text = timeStart.ToString("F2");
     }
 

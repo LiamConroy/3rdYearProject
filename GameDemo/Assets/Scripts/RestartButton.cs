@@ -6,17 +6,17 @@ using UnityEngine.SceneManagement;
 public class RestartButton : MonoBehaviour
 {
 
-    
+    //public static bool musicPlaying; 
     // Start is called before the first frame update
     void Start()
     {
- 
+        //musicPlaying = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        
         Scene currentScene = SceneManager.GetActiveScene();  
         string sceneName = currentScene.name;
 
