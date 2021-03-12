@@ -14,11 +14,13 @@ public class Enemy : MonoBehaviour
     public float wait;
     private float currentWait;
     private bool shot;
-    public float velocity = 0f;
+    public float velocity = 0.0f;
     public float acceleration = 0.1f;
     int VelocityHash;
+    public bool doorReady;
 
     public Animator animator1;
+    
     public GameObject Bullet;
     public GameObject BulletSpawnPoint;
     private Transform bulletSpawned;
@@ -34,8 +36,8 @@ public class Enemy : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         BulletSpawnPoint = GameObject.Find("BulletSpawnPoint");
         enemyCollider = GetComponent<CapsuleCollider>();
-
         VelocityHash = Animator.StringToHash("Velocity");
+        doorReady = false;
     }
 
    //Update is called once per frame
@@ -47,7 +49,7 @@ public class Enemy : MonoBehaviour
         {
             velocity += Time.deltaTime * acceleration;
             agent.SetDestination(target.position);
-            //agent.speed = 8f;
+            agent.speed = 10f;
             //animator1.SetFloat("Speed", 2f);
         }
         else
@@ -80,33 +82,6 @@ public class Enemy : MonoBehaviour
 
     }
 
-
-    //checks if the enemy is colliding with the player, if true deal damage to the player
-  //void OnTriggerStay(Collider other){
-   //   PlayerMovement PlayerCharacter = other.GetComponent<PlayerMovement>();
-   //  if (PlayerCharacter != null){
-    //      PlayerCharacter.playerHurt(dmg);
-     // }
-  //}
-
- 
-//grabs the players(target) position and rotates the model to face the player
-//void FaceTarget (){
-      //  Vector3 direction = (target.position - transform.position).normalized;
-      //  Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-       // transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 15f);
- //   }
-    
-
-    //Enemy takes damage when hit by player's raycast
-    //public void TakeDamage (float amount)
-    // {
-    //     health -= amount;
-    //    if (health <= 0f) {
-    //       Die();
-    //    }
-    // }
-
     public void Shoot()
     {
         shot = true;
@@ -120,6 +95,7 @@ public class Enemy : MonoBehaviour
         lookRadius = 0;
         animator1.SetBool("Dead", true);
         enemyCollider.enabled = false;
+        doorReady = true;
     }
 
     //Draws a sphere around the enemy model, for detecting if the player is within it
